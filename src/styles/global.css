@@ -1,0 +1,86 @@
+/* Импорт оригинальных стилей */
+@import url('../../html/style.css');
+
+/* Импорт исправлений стилей */
+@import url('./fixes.css');
+
+/* Дополнительные исправления для Ionic */
+ion-app {
+  --background: var(--color-background);
+  --ion-background-color: var(--color-background);
+  --ion-text-color: var(--color-text-primary);
+}
+
+ion-content {
+  --background: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+ion-page {
+  background: var(--color-background);
+}
+
+/* Исправление для показа экрана авторизации */
+.auth {
+  display: flex !important;
+}
+
+/* Исправление для профиля через React state */
+.profile.hidden {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.profile.hidden .profile__overlay {
+  opacity: 0;
+}
+
+.profile.hidden .profile__panel {
+  transform: translateX(-100%);
+}
+
+/* Исправление для темы через класс body */
+body.dark .theme-icon--light {
+  opacity: 0;
+  transform: rotate(90deg);
+}
+
+body.dark .theme-icon--dark {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+body:not(.dark) .theme-icon--light {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+body:not(.dark) .theme-icon--dark {
+  opacity: 0;
+  transform: rotate(-90deg);
+}
+
+/* Исправление для темной темы через класс body */
+body.dark {
+  --color-background: #0e0e0e;
+  --color-surface: #1c1c1e;
+  --color-border: #2c2c2e;
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
+  --color-message-incoming: #1c1c1e;
+  --color-message-outgoing: #2AABEE;
+  --color-message-text-incoming: #fafafa;
+  --color-message-text-outgoing: #ffffff;
+}
+
+body.dark .messages {
+  background: #000000;
+}
+
+body.dark .auth {
+  background: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%);
+}

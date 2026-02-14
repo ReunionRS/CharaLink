@@ -1,0 +1,7 @@
+/* Импорт оригинальных стилей */
+@import url('../../html/style.css');
+
+/* Дополнительные стили для React компонентов */
+.messenger-container {
+  display: contents;
+}

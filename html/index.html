@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messenger - Telegram Clone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ==================== ЭКРАН АВТОРИЗАЦИИ ==================== -->
+    <section class="auth" id="auth-screen">
+        <div class="auth__container">
+            <div class="auth__content">
+                <!-- Логотип -->
+                <div class="auth__logo">
+                    <svg class="auth__logo-icon" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="120" cy="120" r="120" fill="url(#gradient)"/>
+                        <path d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6" fill="#c8daea"/>
+                        <path d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763" fill="#a9c6d8"/>
+                        <path d="M81.486 130.178l-20.626-6.96s-2.46-.96-1.67-3.11c.162-.434.475-.813 1.185-1.25 3.237-2.042 60.013-22.945 60.013-22.945s2.04-.6 3.33-.188c.543.172 1.048.458 1.22 1.007.114.365.132.75.132 1.13-.088 1.256-.475 5.5-.475 5.5s-5.756 36.637-8.204 48.937c-.174 1.088-.75 1.462-1.638 1.75-.988.32-2.338-.188-2.338-.188l-23.638-17.374" fill="url(#gradient2)"/>
+                        <defs>
+                            <linearGradient id="gradient" x1="120" y1="0" x2="120" y2="240" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#2AABEE"/>
+                                <stop offset="1" stop-color="#229ED9"/>
+                            </linearGradient>
+                            <linearGradient id="gradient2" x1="98.5" y1="96.5" x2="98.5" y2="151" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#EFF7FC"/>
+                                <stop offset="1" stop-color="white"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <h1 class="auth__title">Messenger</h1>
+                </div>
+
+                <!-- Описание -->
+                <p class="auth__description">
+                    Войдите в свой аккаунт, чтобы начать общение
+                </p>
+
+                <!-- Форма авторизации -->
+                <form class="auth__form">
+                    <!-- Кнопка Google -->
+                    <button type="button" class="auth__button auth__button--google">
+                        <svg class="auth__button-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Войти через Google
+                    </button>
+
+                    <!-- Разделитель -->
+                    <div class="auth__divider">
+                        <span class="auth__divider-text">или</span>
+                    </div>
+
+                    <!-- Поле Email -->
+                    <div class="auth__input-group">
+                        <label for="email" class="auth__label">Email</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            class="auth__input" 
+                            placeholder="example@mail.com"
+                            required
+                        >
+                    </div>
+
+                    <!-- Поле Password -->
+                    <div class="auth__input-group">
+                        <label for="password" class="auth__label">Пароль</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            class="auth__input" 
+                            placeholder="Введите пароль"
+                            required
+                        >
+                    </div>
+
+                    <!-- Забыли пароль -->
+                    <a href="#" class="auth__link">Забыли пароль?</a>
+
+                    <!-- Кнопка входа -->
+                    <button type="submit" class="auth__button auth__button--primary">
+                        Войти
+                    </button>
+
+                    <!-- Регистрация -->
+                    <p class="auth__footer">
+                        Нет аккаунта? <a href="#" class="auth__link auth__link--bold">Зарегистрироваться</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ==================== -->
+    <input type="checkbox" id="profile-toggle" class="profile-toggle-checkbox" aria-label="Переключить профиль">
+    
+    <aside class="profile">
+        <div class="profile__overlay"></div>
+        <div class="profile__panel">
+            <!-- Хедер профиля -->
+            <header class="profile__header">
+                <label for="profile-toggle" class="profile__close-btn" aria-label="Закрыть профиль">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </label>
+                <h2 class="profile__title">Профиль</h2>
+                <button class="profile__edit-btn" aria-label="Редактировать профиль">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </header>
+
+            <!-- Контент профиля -->
+            <div class="profile__content">
+                <!-- Аватар и основная информация -->
+                <section class="profile__main">
+                    <div class="profile__avatar-wrapper">
+                        <div class="profile__avatar">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23845ef7'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EВЫ%3C/text%3E%3C/svg%3E" alt="Ваш аватар">
+                        </div>
+                        <label class="profile__avatar-upload" for="avatar-upload" aria-label="Изменить аватар">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="13" r="4" stroke-width="2"/>
+                            </svg>
+                            <input type="file" id="avatar-upload" accept="image/*" hidden>
+                        </label>
+                    </div>
+                    
+                    <h3 class="profile__name">Ваше Имя</h3>
+                    <p class="profile__username">@username</p>
+                    <p class="profile__bio">Добавьте информацию о себе...</p>
+                </section>
+
+                <!-- Форма редактирования -->
+                <form class="profile__form">
+                    <!-- Имя -->
+                    <div class="profile__field">
+                        <label class="profile__field-label" for="first-name">
+                            <svg class="profile__field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="7" r="4" stroke-width="2"/>
+                            </svg>
+                            Имя
+                        </label>
+                        <input 
+                            type="text" 
+                            id="first-name" 
+                            class="profile__field-input" 
+                            placeholder="Введите имя"
+                            value="Ваше"
+                        >
+                    </div>
+
+                    <!-- Фамилия -->
+                    <div class="profile__field">
+                        <label class="profile__field-label" for="last-name">
+                            <svg class="profile__field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="7" r="4" stroke-width="2"/>
+                            </svg>
+                            Фамилия
+                        </label>
+                        <input 
+                            type="text" 
+                            id="last-name" 
+                            class="profile__field-input" 
+                            placeholder="Введите фамилию"
+                            value="Имя"
+                        >
+                    </div>
+
+                    <!-- Дата рождения -->
+                    <div class="profile__field">
+                        <label class="profile__field-label" for="birth-date">
+                            <svg class="profile__field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke-width="2"/>
+                                <path d="M16 2v4M8 2v4M3 10h18" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Дата рождения
+                        </label>
+                        <input 
+                            type="date" 
+                            id="birth-date" 
+                            class="profile__field-input"
+                            value="1995-06-15"
+                        >
+                    </div>
+
+                    <!-- О себе -->
+                    <div class="profile__field">
+                        <label class="profile__field-label" for="bio">
+                            <svg class="profile__field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            О себе
+                        </label>
+                        <textarea 
+                            id="bio" 
+                            class="profile__field-textarea" 
+                            placeholder="Расскажите о себе..."
+                            rows="3"
+                        >Любитель хорошей музыки и интересных разговоров 🎵</textarea>
+                    </div>
+                </form>
+
+                <!-- Музыка в профиле -->
+                <section class="profile__section">
+                    <h4 class="profile__section-title">
+                        <svg class="profile__section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M9 18V5l12-2v13" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="6" cy="18" r="3" stroke-width="2"/>
+                            <circle cx="18" cy="16" r="3" stroke-width="2"/>
+                        </svg>
+                        Музыка
+                    </h4>
+                    
+                    <div class="profile__music">
+                        <!-- Текущий трек -->
+                        <article class="music-track music-track--active">
+                            <div class="music-track__cover">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polygon points="10 8 16 12 10 16 10 8" fill="white"/>
+                                </svg>
+                            </div>
+                            <div class="music-track__info">
+                                <h5 class="music-track__title">Midnight City</h5>
+                                <p class="music-track__artist">M83</p>
+                            </div>
+                            <button class="music-track__remove" aria-label="Удалить трек">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </article>
+
+                        <!-- Кнопка добавить музыку -->
+                        <label class="profile__add-music" for="music-upload">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                <path d="M12 8v8m-4-4h8" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Добавить музыку
+                            <input type="file" id="music-upload" accept="audio/*" hidden>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Личный канал -->
+                <section class="profile__section">
+                    <h4 class="profile__section-title">
+                        <svg class="profile__section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="9" cy="7" r="4" stroke-width="2"/>
+                            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Мой канал
+                    </h4>
+
+                    <article class="profile__channel">
+                        <div class="profile__channel-header">
+                            <div class="profile__channel-avatar">
+                                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="50" cy="50" r="50" fill="#2AABEE"/>
+                                    <path d="M25 50h50M50 25v50" stroke="white" stroke-width="8" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="profile__channel-info">
+                                <h5 class="profile__channel-name">Создать канал</h5>
+                                <p class="profile__channel-subscribers">Поделитесь своими мыслями</p>
+                            </div>
+                        </div>
+                        
+                        <button class="profile__channel-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 5v14m7-7H5" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Создать
+                        </button>
+                    </article>
+
+                    <!-- Если канал уже создан (закомментировано для примера) -->
+                    <!--
+                    <article class="profile__channel profile__channel--created">
+                        <div class="profile__channel-header">
+                            <div class="profile__channel-avatar">
+                                <img src="channel-avatar.jpg" alt="Мой канал">
+                            </div>
+                            <div class="profile__channel-info">
+                                <h5 class="profile__channel-name">Мой личный канал</h5>
+                                <p class="profile__channel-subscribers">1,234 подписчиков</p>
+                            </div>
+                        </div>
+                        
+                        <button class="profile__channel-btn profile__channel-btn--manage">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <circle cx="12" cy="12" r="3" stroke-width="2"/>
+                                <path d="M12 1v6m0 6v6M3.34 6.34l4.24 4.24m8.48 0l4.24-4.24M1 12h6m6 0h6M3.34 17.66l4.24-4.24m8.48 0l4.24 4.24" stroke-width="2"/>
+                            </svg>
+                            Управление
+                        </button>
+                    </article>
+                    -->
+                </section>
+
+                <!-- Дополнительные настройки -->
+                <section class="profile__section">
+                    <h4 class="profile__section-title">
+                        <svg class="profile__section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="3" stroke-width="2"/>
+                            <path d="M12 1v6m0 6v6M3.34 6.34l4.24 4.24m8.48 0l4.24-4.24M1 12h6m6 0h6M3.34 17.66l4.24-4.24m8.48 0l4.24 4.24" stroke-width="2"/>
+                        </svg>
+                        Настройки
+                    </h4>
+
+                    <nav class="profile__settings">
+                        <a href="#" class="profile__settings-item">
+                            <svg class="profile__settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke-width="2"/>
+                                <path d="M7 11V7a5 5 0 0110 0v4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="profile__settings-text">Приватность и безопасность</span>
+                            <svg class="profile__settings-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+
+                        <a href="#" class="profile__settings-item">
+                            <svg class="profile__settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="profile__settings-text">Данные и хранилище</span>
+                            <svg class="profile__settings-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+
+                        <a href="#" class="profile__settings-item">
+                            <svg class="profile__settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                <path d="M12 16v-4m0-4h.01" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <span class="profile__settings-text">Помощь</span>
+                            <svg class="profile__settings-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </nav>
+                </section>
+
+                <!-- Кнопка выхода -->
+                <button class="profile__logout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4m7 14l5-5-5-5m5 5H9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Выйти из аккаунта
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ==================== ГЛАВНЫЙ ЭКРАН МЕССЕНДЖЕРА ==================== -->
+    <main class="messenger">
+        <!-- Sidebar с чатами -->
+        <aside class="sidebar">
+            <!-- Хедер сайдбара -->
+            <header class="sidebar__header">
+                <label for="profile-toggle" class="sidebar__profile-btn" aria-label="Открыть профиль">
+                    <div class="sidebar__profile-avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23845ef7'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EВЫ%3C/text%3E%3C/svg%3E" alt="Ваш профиль">
+                    </div>
+                </label>
+                
+                <div class="sidebar__search">
+                    <svg class="sidebar__search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="11" cy="11" r="8" stroke-width="2"/>
+                        <path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <input 
+                        type="search" 
+                        class="sidebar__search-input" 
+                        placeholder="Поиск"
+                    >
+                </div>
+                
+                <label for="theme-toggle" class="sidebar__theme-toggle" aria-label="Переключить тему">
+                    <svg class="theme-icon theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="5" stroke-width="2"/>
+                        <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <svg class="theme-icon theme-icon--dark" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+                    </svg>
+                </label>
+            </header>
+
+            <!-- Список чатов -->
+            <nav class="chats" aria-label="Список чатов">
+                <!-- Чат 1 (активный) -->
+                <article class="chat chat--active">
+                    <div class="chat__avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%234a9eff'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EАМ%3C/text%3E%3C/svg%3E" alt="Анна Михайлова">
+                    </div>
+                    <div class="chat__content">
+                        <div class="chat__header">
+                            <h3 class="chat__name">Анна Михайлова</h3>
+                            <time class="chat__time" datetime="2024-02-14T15:30">15:30</time>
+                        </div>
+                        <div class="chat__footer">
+                            <p class="chat__message">Отлично, жду тебя завтра!</p>
+                            <span class="chat__badge">3</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Чат 2 -->
+                <article class="chat">
+                    <div class="chat__avatar chat__avatar--online">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ff6b6b'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EДП%3C/text%3E%3C/svg%3E" alt="Дмитрий Петров">
+                    </div>
+                    <div class="chat__content">
+                        <div class="chat__header">
+                            <h3 class="chat__name">Дмитрий Петров</h3>
+                            <time class="chat__time" datetime="2024-02-14T14:22">14:22</time>
+                        </div>
+                        <div class="chat__footer">
+                            <svg class="chat__read-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <p class="chat__message">Понял, спасибо за информацию</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Чат 3 -->
+                <article class="chat">
+                    <div class="chat__avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2351cf66'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EЕС%3C/text%3E%3C/svg%3E" alt="Елена Смирнова">
+                    </div>
+                    <div class="chat__content">
+                        <div class="chat__header">
+                            <h3 class="chat__name">Елена Смирнова</h3>
+                            <time class="chat__time" datetime="2024-02-14T12:05">12:05</time>
+                        </div>
+                        <div class="chat__footer">
+                            <p class="chat__message">Фото с вчерашнего мероприятия</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Чат 4 - Группа -->
+                <article class="chat">
+                    <div class="chat__avatar chat__avatar--group">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23845ef7'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='35' font-family='Arial'%3E👥%3C/text%3E%3C/svg%3E" alt="Рабочая группа">
+                    </div>
+                    <div class="chat__content">
+                        <div class="chat__header">
+                            <h3 class="chat__name">Рабочая группа</h3>
+                            <time class="chat__time" datetime="2024-02-14T11:48">11:48</time>
+                        </div>
+                        <div class="chat__footer">
+                            <p class="chat__message"><strong>Иван:</strong> Всем доброе утро!</p>
+                            <svg class="chat__pin-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Чат 5 -->
+                <article class="chat">
+                    <div class="chat__avatar chat__avatar--online">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ffa94d'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EМК%3C/text%3E%3C/svg%3E" alt="Максим Ковалев">
+                    </div>
+                    <div class="chat__content">
+                        <div class="chat__header">
+                            <h3 class="chat__name">Максим Ковалев</h3>
+                            <time class="chat__time" datetime="2024-02-13T23:15">Вчера</time>
+                        </div>
+                        <div class="chat__footer">
+                            <p class="chat__message">Отправлю документы утром</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Чат 6 -->
+                <article class="chat">
+                    <div class="chat__avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23f06595'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EОВ%3C/text%3E%3C/svg%3E" alt="Ольга Васильева">
+                    </div>
+                    <div class="chat__content">
+                        <div class="chat__header">
+                            <h3 class="chat__name">Ольга Васильева</h3>
+                            <time class="chat__time" datetime="2024-02-13T19:42">Вчера</time>
+                        </div>
+                        <div class="chat__footer">
+                            <svg class="chat__read-icon chat__read-icon--sent" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <p class="chat__message">Хорошо, созвонимся позже</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Чат 7 -->
+                <article class="chat">
+                    <div class="chat__avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2320c997'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EАЛ%3C/text%3E%3C/svg%3E" alt="Алексей Лебедев">
+                    </div>
+                    <div class="chat__content">
+                        <div class="chat__header">
+                            <h3 class="chat__name">Алексей Лебедев</h3>
+                            <time class="chat__time" datetime="2024-02-13T16:20">Вчера</time>
+                        </div>
+                        <div class="chat__footer">
+                            <p class="chat__message">👍</p>
+                        </div>
+                    </div>
+                </article>
+            </nav>
+        </aside>
+
+        <!-- Окно переписки -->
+        <section class="chat-window">
+            <!-- Хедер чата -->
+            <header class="chat-window__header">
+                <button class="chat-window__back" aria-label="Назад к чатам">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                <div class="chat-window__user">
+                    <div class="chat-window__avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%234a9eff'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EАМ%3C/text%3E%3C/svg%3E" alt="Анна Михайлова">
+                    </div>
+                    <div class="chat-window__info">
+                        <h2 class="chat-window__name">Анна Михайлова</h2>
+                        <p class="chat-window__status">была в сети 2 минуты назад</p>
+                    </div>
+                </div>
+
+                <div class="chat-window__actions">
+                    <button class="chat-window__action-btn" aria-label="Поиск">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="11" cy="11" r="8" stroke-width="2"/>
+                            <path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <button class="chat-window__action-btn" aria-label="Меню">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="5" r="2"/>
+                            <circle cx="12" cy="12" r="2"/>
+                            <circle cx="12" cy="19" r="2"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Сообщения -->
+            <div class="messages">
+                <!-- Дата -->
+                <div class="messages__date">
+                    <time datetime="2024-02-14">14 февраля</time>
+                </div>
+
+                <!-- Входящее сообщение -->
+                <article class="message message--incoming">
+                    <div class="message__avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%234a9eff'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EАМ%3C/text%3E%3C/svg%3E" alt="Анна Михайлова">
+                    </div>
+                    <div class="message__content">
+                        <div class="message__bubble">
+                            <p class="message__text">Привет! Как дела?</p>
+                            <time class="message__time" datetime="2024-02-14T14:20">14:20</time>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Исходящее сообщение -->
+                <article class="message message--outgoing">
+                    <div class="message__content">
+                        <div class="message__bubble">
+                            <p class="message__text">Привет! Всё отлично, спасибо! А у тебя как?</p>
+                            <div class="message__meta">
+                                <time class="message__time" datetime="2024-02-14T14:21">14:21</time>
+                                <svg class="message__read-status message__read-status--read" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M22 6L11 17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Входящее сообщение -->
+                <article class="message message--incoming">
+                    <div class="message__avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%234a9eff'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EАМ%3C/text%3E%3C/svg%3E" alt="Анна Михайлова">
+                    </div>
+                    <div class="message__content">
+                        <div class="message__bubble">
+                            <p class="message__text">Тоже хорошо! Слушай, не забыл про встречу завтра?</p>
+                            <time class="message__time" datetime="2024-02-14T14:22">14:22</time>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Исходящее сообщение -->
+                <article class="message message--outgoing">
+                    <div class="message__content">
+                        <div class="message__bubble">
+                            <p class="message__text">Конечно нет, всё помню! В 15:00 в кафе на Пушкинской, верно?</p>
+                            <div class="message__meta">
+                                <time class="message__time" datetime="2024-02-14T14:24">14:24</time>
+                                <svg class="message__read-status message__read-status--read" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M22 6L11 17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Входящее длинное сообщение -->
+                <article class="message message--incoming">
+                    <div class="message__avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%234a9eff'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EАМ%3C/text%3E%3C/svg%3E" alt="Анна Михайлова">
+                    </div>
+                    <div class="message__content">
+                        <div class="message__bubble">
+                            <p class="message__text">Да, именно! Я уже забронировала столик. Кстати, захвати, пожалуйста, те документы, о которых мы говорили на прошлой неделе. Они нам понадобятся для обсуждения проекта.</p>
+                            <time class="message__time" datetime="2024-02-14T14:26">14:26</time>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Исходящее сообщение -->
+                <article class="message message--outgoing">
+                    <div class="message__content">
+                        <div class="message__bubble">
+                            <p class="message__text">Хорошо, обязательно возьму! 📄</p>
+                            <div class="message__meta">
+                                <time class="message__time" datetime="2024-02-14T14:28">14:28</time>
+                                <svg class="message__read-status message__read-status--read" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M22 6L11 17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Входящее сообщение -->
+                <article class="message message--incoming">
+                    <div class="message__avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%234a9eff'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3EАМ%3C/text%3E%3C/svg%3E" alt="Анна Михайлова">
+                    </div>
+                    <div class="message__content">
+                        <div class="message__bubble">
+                            <p class="message__text">Отлично, жду тебя завтра! 😊</p>
+                            <time class="message__time" datetime="2024-02-14T15:30">15:30</time>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Панель ввода -->
+            <footer class="input-panel">
+                <button class="input-panel__attach-btn" aria-label="Прикрепить файл">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                <div class="input-panel__input-wrapper">
+                    <input 
+                        type="text" 
+                        class="input-panel__input" 
+                        placeholder="Написать сообщение..."
+                        aria-label="Поле ввода сообщения"
+                    >
+                    <button class="input-panel__emoji-btn" aria-label="Добавить эмодзи">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                            <path d="M8 14s1.5 2 4 2 4-2 4-2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="9" cy="9" r="1" fill="currentColor"/>
+                            <circle cx="15" cy="9" r="1" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <button class="input-panel__send-btn" aria-label="Отправить сообщение">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </footer>
+        </section>
+    </main>
+
+    <!-- Чекбокс для переключения темы (скрытый) -->
+    <input type="checkbox" id="theme-toggle" class="theme-toggle-checkbox" aria-label="Переключить тему">
+</body>
+</html>

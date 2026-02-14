@@ -1,0 +1,15 @@
+.profile-edit-content {
+  padding: 24px;
+}
+
+.avatar-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.profile-avatar-large {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 16px;
+}
+

@@ -1,0 +1,147 @@
+/* Исправления стилей */
+
+/* Статус ближе к нику в чате */
+.chat-window__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px !important; /* Уменьшено с 4px */
+}
+
+.chat-window__status {
+  margin-top: -2px !important; /* Прилегает ближе к нику */
+  line-height: 1.2 !important;
+  font-size: 12px !important;
+}
+
+/* Аватары в сайдбаре - выравнивание */
+.chat {
+  display: flex;
+  align-items: center !important; /* Выравнивание по центру */
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.chat__avatar {
+  align-self: center !important; /* Центрирование аватара */
+  flex-shrink: 0;
+  margin-top: 0 !important;
+}
+
+.chat__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center !important; /* Вертикальное центрирование */
+  gap: 4px;
+  min-height: 52px; /* Минимальная высота для выравнивания */
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 10px 14px;
+  align-items: center;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-secondary);
+  animation: typing 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+/* Изображения в сообщениях */
+.message__image-wrapper {
+  margin-bottom: 4px;
+}
+
+.message__image {
+  max-width: 300px;
+  max-height: 400px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  display: block;
+}
+
+/* Файлы в сообщениях */
+.message__file {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-sm);
+  margin-bottom: 4px;
+}
+
+.message--outgoing .message__file {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Индикатор онлайн статуса на аватаре */
+.chat-window__avatar,
+.message__avatar,
+.chat__avatar {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-online-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  background: #4caf50;
+  border: 2px solid var(--color-background);
+  border-radius: 50%;
+  z-index: 10;
+  box-shadow: 0 0 0 2px var(--color-background);
+}
+
+.chat-window__avatar .avatar-online-indicator {
+  border-color: var(--color-surface);
+  box-shadow: 0 0 0 2px var(--color-surface);
+}
+
+.message__avatar .avatar-online-indicator {
+  border-color: var(--color-background);
+  box-shadow: 0 0 0 2px var(--color-background);
+}
+
+.chat__avatar .avatar-online-indicator {
+  border-color: var(--color-background);
+  box-shadow: 0 0 0 2px var(--color-background);
+}
+
+/* Галочки прочтения */
+.message__read-status {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.message__read-status--read {
+  opacity: 1;
+  color: #4caf50;
+}
