@@ -1,0 +1,97 @@
+.create-group-container {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.create-group-form {
+  margin-bottom: 24px;
+}
+
+.create-group-contacts {
+  margin-bottom: 24px;
+}
+
+.create-group-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--ion-text-color);
+}
+
+.create-group-contacts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.create-group-contact-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--ion-color-light);
+  cursor: pointer;
+  transition: background 0.2s;
+  border: 2px solid transparent;
+}
+
+.create-group-contact-item:hover {
+  background: var(--ion-color-light-shade);
+}
+
+.create-group-contact-item.selected {
+  border-color: var(--ion-color-primary);
+  background: var(--ion-color-primary-tint);
+}
+
+.create-group-contact-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.create-group-contact-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.create-group-contact-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.create-group-contact-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ion-text-color);
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.create-group-contact-email {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.create-group-empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--ion-color-medium);
+}
+
+.create-group-actions {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ion-color-border);
+}
+

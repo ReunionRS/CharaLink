@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { authService, OnlineVisibility } from '../services/authService';
 import { presenceService } from '../services/presenceService';
 import { channelService } from '../services/channelService';
+import { chatService, Chat } from '../services/chatService';
 import { imageUtils } from '../utils/imageUtils';
 import './Profile.css';
 
@@ -23,6 +24,9 @@ const Profile: React.FC<ProfileProps> = ({ onClose, showProfile }) => {
   const [loading, setLoading] = useState(false);
   const [onlineVisibility, setOnlineVisibility] = useState<OnlineVisibility>('everyone');
   const [showPrivacySettings, setShowPrivacySettings] = useState(false);
+  const [adminChats, setAdminChats] = useState<Chat[]>([]);
+  const [createdChats, setCreatedChats] = useState<Chat[]>([]);
+  const [isLoadingChats, setIsLoadingChats] = useState(false);
 
   useEffect(() => {
     if (userProfile) {
@@ -34,6 +38,29 @@ const Profile: React.FC<ProfileProps> = ({ onClose, showProfile }) => {
       setOnlineVisibility(userProfile.onlineVisibility || 'everyone');
     }
   }, [userProfile]);
+
+  // Загружаем каналы и группы где пользователь админ
+  useEffect(() => {
+    if (!user) return;
+    
+    setIsLoadingChats(true);
+    const loadChats = async () => {
+      try {
+        const [adminChatsData, createdChatsData] = await Promise.all([
+          chatService.getUserAdminChats(user.uid),
+          chatService.getUserCreatedChats(user.uid),
+        ]);
+        setAdminChats(adminChatsData);
+        setCreatedChats(createdChatsData);
+      } catch (error) {
+        console.error('Error loading chats:', error);
+      } finally {
+        setIsLoadingChats(false);
+      }
+    };
+    
+    loadChats();
+  }, [user]);
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -247,39 +274,95 @@ const Profile: React.FC<ProfileProps> = ({ onClose, showProfile }) => {
             </div>
           </form>
 
-          {/* Личный канал */}
-          <section className="profile__section">
-            <h4 className="profile__section-title">
-              <svg className="profile__section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="9" cy="7" r="4" strokeWidth="2"/>
-                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Мой канал
-            </h4>
-
-            <article className="profile__channel">
-              <div className="profile__channel-header">
-                <div className="profile__channel-avatar">
-                  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="50" fill="#2AABEE"/>
-                    <path d="M25 50h50M50 25v50" stroke="white" strokeWidth="8" strokeLinecap="round"/>
-                  </svg>
-                </div>
-                <div className="profile__channel-info">
-                  <h5 className="profile__channel-name">Создать канал</h5>
-                  <p className="profile__channel-subscribers">Поделитесь своими мыслями</p>
-                </div>
-              </div>
-              
-              <button className="profile__channel-btn" onClick={handleCreateChannel}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M12 5v14m7-7H5" strokeWidth="2" strokeLinecap="round"/>
+          {/* Мои каналы и группы */}
+          {(createdChats.length > 0 || adminChats.length > 0) && (
+            <section className="profile__section">
+              <h4 className="profile__section-title">
+                <svg className="profile__section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="9" cy="7" r="4" strokeWidth="2"/>
+                  <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                Создать
-              </button>
-            </article>
-          </section>
+                Мои каналы и группы
+              </h4>
+
+              {createdChats.map((chat) => (
+                <article 
+                  key={chat.id} 
+                  className="profile__channel"
+                  onClick={() => {
+                    history.push(`/home?chatId=${chat.id}`);
+                    onClose();
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="profile__channel-header">
+                    <div className="profile__channel-avatar">
+                      <img 
+                        src={chat.avatar || imageUtils.generateAvatarUrl(chat.name || 'Канал', '4a9eff')} 
+                        alt={chat.name}
+                      />
+                    </div>
+                    <div className="profile__channel-info">
+                      <h5 className="profile__channel-name">{chat.name || 'Канал'}</h5>
+                      <p className="profile__channel-subscribers">
+                        {chat.type === 'channel' ? 'Канал' : 'Группа'} • {chat.participants.length} участников
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+
+              {adminChats.filter(chat => chat.createdBy !== user?.uid).map((chat) => (
+                <article 
+                  key={chat.id} 
+                  className="profile__channel"
+                  onClick={() => {
+                    history.push(`/home?chatId=${chat.id}`);
+                    onClose();
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="profile__channel-header">
+                    <div className="profile__channel-avatar">
+                      <img 
+                        src={chat.avatar || imageUtils.generateAvatarUrl(chat.name || 'Группа', '4a9eff')} 
+                        alt={chat.name}
+                      />
+                    </div>
+                    <div className="profile__channel-info">
+                      <h5 className="profile__channel-name">{chat.name || 'Группа'}</h5>
+                      <p className="profile__channel-subscribers">
+                        {chat.type === 'channel' ? 'Канал' : 'Группа'} • Админ • {chat.participants.length} участников
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+
+              <article className="profile__channel">
+                <div className="profile__channel-header">
+                  <div className="profile__channel-avatar">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="50" cy="50" r="50" fill="#2AABEE"/>
+                      <path d="M25 50h50M50 25v50" stroke="white" strokeWidth="8" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <div className="profile__channel-info">
+                    <h5 className="profile__channel-name">Создать канал</h5>
+                    <p className="profile__channel-subscribers">Поделитесь своими мыслями</p>
+                  </div>
+                </div>
+                
+                <button className="profile__channel-btn" onClick={handleCreateChannel}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 5v14m7-7H5" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  Создать
+                </button>
+              </article>
+            </section>
+          )}
 
           {/* Дополнительные настройки */}
           <section className="profile__section">

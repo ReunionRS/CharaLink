@@ -42,6 +42,8 @@ export interface Chat {
   avatar?: string;
   description?: string;
   createdBy?: string;
+  admins?: string[]; // Список ID администраторов
+  muted?: { [userId: string]: boolean }; // Пользователи, которые отключили уведомления
 }
 
 export const chatService = {
@@ -205,6 +207,251 @@ export const chatService = {
     }
     
     return chatId;
+  },
+
+  // Create group chat
+  async createGroupChat(
+    creatorId: string,
+    participantIds: string[],
+    name: string,
+    avatar?: string,
+    description?: string
+  ): Promise<string> {
+    if (participantIds.length < 2) {
+      throw new Error('Групповой чат должен содержать минимум 2 участника');
+    }
+
+    // Убеждаемся, что создатель включен в участники
+    const allParticipants = [...new Set([creatorId, ...participantIds])];
+
+    const chatId = await this.createChat('group', allParticipants, name, creatorId);
+    
+    // Обновляем чат с дополнительными данными
+    const chatRef = doc(db, 'chats', chatId);
+    const updateData: any = {
+      updatedAt: Date.now(),
+      admins: [creatorId], // Создатель автоматически становится админом
+    };
+    
+    if (avatar) {
+      updateData.avatar = avatar;
+    }
+    
+    if (description) {
+      updateData.description = description;
+    }
+    
+    await updateDoc(chatRef, updateData);
+    
+    return chatId;
+  },
+
+  // Add participants to group chat
+  async addParticipantsToGroup(chatId: string, userIds: string[]): Promise<void> {
+    const chatRef = doc(db, 'chats', chatId);
+    const chatDoc = await getDoc(chatRef);
+    
+    if (!chatDoc.exists()) {
+      throw new Error('Чат не найден');
+    }
+    
+    const chatData = chatDoc.data() as Chat;
+    if (chatData.type !== 'group') {
+      throw new Error('Можно добавлять участников только в групповые чаты');
+    }
+    
+    const currentParticipants = chatData.participants || [];
+    const newParticipants = [...new Set([...currentParticipants, ...userIds])];
+    
+    await updateDoc(chatRef, {
+      participants: newParticipants,
+      updatedAt: Date.now(),
+    });
+  },
+
+  // Remove participant from group chat
+  async removeParticipantFromGroup(chatId: string, userId: string): Promise<void> {
+    const chatRef = doc(db, 'chats', chatId);
+    const chatDoc = await getDoc(chatRef);
+    
+    if (!chatDoc.exists()) {
+      throw new Error('Чат не найден');
+    }
+    
+    const chatData = chatDoc.data() as Chat;
+    if (chatData.type !== 'group') {
+      throw new Error('Можно удалять участников только из групповых чатов');
+    }
+    
+    const currentParticipants = chatData.participants || [];
+    const newParticipants = currentParticipants.filter(id => id !== userId);
+    
+    if (newParticipants.length < 2) {
+      throw new Error('В групповом чате должно быть минимум 2 участника');
+    }
+    
+    // Удаляем из админов, если был админом
+    const currentAdmins = chatData.admins || [];
+    const newAdmins = currentAdmins.filter(id => id !== userId);
+    
+    await updateDoc(chatRef, {
+      participants: newParticipants,
+      admins: newAdmins,
+      updatedAt: Date.now(),
+    });
+  },
+
+  // Add admin to group/channel
+  async addAdmin(chatId: string, userId: string): Promise<void> {
+    const chatRef = doc(db, 'chats', chatId);
+    const chatDoc = await getDoc(chatRef);
+    
+    if (!chatDoc.exists()) {
+      throw new Error('Чат не найден');
+    }
+    
+    const chatData = chatDoc.data() as Chat;
+    if (chatData.type === 'direct') {
+      throw new Error('Нельзя добавлять админов в личные чаты');
+    }
+    
+    const currentAdmins = chatData.admins || [];
+    if (currentAdmins.includes(userId)) {
+      throw new Error('Пользователь уже является администратором');
+    }
+    
+    // Проверяем, что пользователь является участником
+    if (!chatData.participants.includes(userId)) {
+      throw new Error('Пользователь должен быть участником группы/канала');
+    }
+    
+    await updateDoc(chatRef, {
+      admins: [...currentAdmins, userId],
+      updatedAt: Date.now(),
+    });
+  },
+
+  // Remove admin from group/channel
+  async removeAdmin(chatId: string, userId: string): Promise<void> {
+    const chatRef = doc(db, 'chats', chatId);
+    const chatDoc = await getDoc(chatRef);
+    
+    if (!chatDoc.exists()) {
+      throw new Error('Чат не найден');
+    }
+    
+    const chatData = chatDoc.data() as Chat;
+    const currentAdmins = chatData.admins || [];
+    
+    if (!currentAdmins.includes(userId)) {
+      throw new Error('Пользователь не является администратором');
+    }
+    
+    // Нельзя удалить создателя из админов
+    if (chatData.createdBy === userId) {
+      throw new Error('Нельзя удалить создателя из администраторов');
+    }
+    
+    await updateDoc(chatRef, {
+      admins: currentAdmins.filter(id => id !== userId),
+      updatedAt: Date.now(),
+    });
+  },
+
+  // Toggle mute notifications for group/channel
+  async toggleMute(chatId: string, userId: string, muted: boolean): Promise<void> {
+    const chatRef = doc(db, 'chats', chatId);
+    const currentMuted = (await getDoc(chatRef)).data()?.muted || {};
+    
+    await updateDoc(chatRef, {
+      muted: {
+        ...currentMuted,
+        [userId]: muted,
+      },
+      updatedAt: Date.now(),
+    });
+  },
+
+  // Get media statistics for group/channel
+  async getMediaStats(chatId: string): Promise<{
+    photos: number;
+    videos: number;
+    files: number;
+    audio: number;
+    links: number;
+    voiceMessages: number;
+    gifs: number;
+  }> {
+    const q = query(
+      collection(db, 'messages'),
+      where('chatId', '==', chatId)
+    );
+    const snapshot = await getDocs(q);
+    
+    const stats = {
+      photos: 0,
+      videos: 0,
+      files: 0,
+      audio: 0,
+      links: 0,
+      voiceMessages: 0,
+      gifs: 0,
+    };
+    
+    snapshot.docs.forEach((doc) => {
+      const message = doc.data();
+      const text = message.text?.toLowerCase() || '';
+      
+      if (message.type === 'image') {
+        stats.photos++;
+      } else if (message.type === 'file') {
+        if (text.includes('[голосовое сообщение]') || text.includes('voice')) {
+          stats.voiceMessages++;
+        } else if (text.includes('.gif') || text.includes('gif')) {
+          stats.gifs++;
+        } else if (text.includes('http://') || text.includes('https://')) {
+          stats.links++;
+        } else {
+          stats.files++;
+        }
+      } else if (message.text) {
+        // Проверяем ссылки в текстовых сообщениях
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        if (urlRegex.test(message.text)) {
+          stats.links++;
+        }
+      }
+    });
+    
+    return stats;
+  },
+
+  // Get user's groups and channels where they are admin
+  async getUserAdminChats(userId: string): Promise<Chat[]> {
+    const q = query(
+      collection(db, 'chats'),
+      where('admins', 'array-contains', userId),
+      orderBy('updatedAt', 'desc')
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Chat[];
+  },
+
+  // Get user's created groups and channels
+  async getUserCreatedChats(userId: string): Promise<Chat[]> {
+    const q = query(
+      collection(db, 'chats'),
+      where('createdBy', '==', userId),
+      orderBy('updatedAt', 'desc')
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Chat[];
   },
 };
 

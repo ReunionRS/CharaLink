@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import PhoneAuth from './pages/PhoneAuth';
 import ProfileEdit from './pages/ProfileEdit';
 import Channels from './pages/Channels';
+import Contacts from './pages/Contacts';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -64,6 +65,9 @@ const App: React.FC = () => (
             </Route>
             <Route exact path="/channels">
               <Channels />
+            </Route>
+            <Route exact path="/contacts">
+              <Contacts />
             </Route>
             <Route exact path="/">
               <Redirect to="/home" />

@@ -5,3 +5,20 @@
 .messenger-container {
   display: contents;
 }
+
+/* Кнопка контактов в сайдбаре */
+.sidebar__contacts-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.sidebar__contacts-btn:hover {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}

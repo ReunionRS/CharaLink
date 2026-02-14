@@ -74,3 +74,10 @@ body.dark .profile__privacy-option:hover {
   cursor: pointer;
 }
 
+/* Стили для аватара канала */
+.profile__channel-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+

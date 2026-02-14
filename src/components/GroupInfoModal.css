@@ -1,0 +1,223 @@
+.group-info-modal {
+  --width: 100%;
+  --max-width: 500px;
+}
+
+.group-info-container {
+  padding: 0;
+  background: var(--ion-background-color);
+}
+
+.group-info-header {
+  text-align: center;
+  padding: 24px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.group-info-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 16px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.group-info-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.group-info-name {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: white;
+}
+
+.group-info-meta {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+/* Кнопки действий */
+.group-info-actions-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 16px;
+  background: var(--ion-background-color);
+  border-bottom: 1px solid var(--ion-color-border, #e4e4e7);
+}
+
+.group-info-action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 8px;
+  background: transparent;
+  border: none;
+  color: var(--ion-text-color);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.group-info-action-button:hover {
+  background: var(--ion-color-light);
+}
+
+.group-info-action-button ion-icon {
+  font-size: 24px;
+}
+
+.group-info-action-button span {
+  font-size: 12px;
+}
+
+/* Описание */
+.group-info-description-section {
+  padding: 16px;
+  border-bottom: 1px solid var(--ion-color-border, #e4e4e7);
+}
+
+.group-info-description-text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ion-text-color);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* Статистика медиа */
+.group-info-media-stats {
+  padding: 16px;
+  border-bottom: 1px solid var(--ion-color-border, #e4e4e7);
+}
+
+.group-info-media-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  color: var(--ion-text-color);
+  font-size: 15px;
+}
+
+.group-info-media-item:not(:last-child) {
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+.media-icon {
+  font-size: 20px;
+  color: var(--ion-color-primary);
+  width: 24px;
+  height: 24px;
+}
+
+.group-info-section {
+  padding: 16px;
+  border-bottom: 1px solid var(--ion-color-border, #e4e4e7);
+}
+
+.group-info-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: var(--ion-text-color);
+}
+
+.group-info-loading {
+  text-align: center;
+  padding: 32px;
+  color: var(--ion-color-medium);
+}
+
+.group-info-participants {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.group-info-participant {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+.group-info-participant:last-child {
+  border-bottom: none;
+}
+
+.group-info-participant.current-user {
+  background: var(--ion-color-primary-tint);
+  margin: 0 -16px;
+  padding: 12px 16px;
+}
+
+.group-info-participant-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.group-info-participant-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.group-info-participant-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.group-info-participant-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ion-text-color);
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.group-info-participant-badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  background: var(--ion-color-primary);
+  color: white;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.group-info-participant-badge.admin {
+  background: var(--ion-color-warning);
+}
+
+.group-info-participant-email {
+  font-size: 13px;
+  color: var(--ion-color-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group-info-actions {
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.group-info-action-btn {
+  margin: 0;
+  --border-radius: 8px;
+}

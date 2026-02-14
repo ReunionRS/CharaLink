@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { chatService, Chat, Message } from '../services/chatService';
-import { authService } from '../services/authService';
+import { authService, UserProfile } from '../services/authService';
 import { typingService } from '../services/typingService';
 import { presenceService, PresenceData } from '../services/presenceService';
 import { callService, Call } from '../services/callService';
 import { imageUtils } from '../utils/imageUtils';
 import EmojiPicker from './EmojiPicker';
 import CallModal from './CallModal';
+import UserInfoModal from './UserInfoModal';
+import GroupInfoModal from './GroupInfoModal';
 import './ChatWindow.css';
 
 interface ChatWindowProps {
@@ -24,6 +26,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat, onBack }) => {
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [otherUserPresence, setOtherUserPresence] = useState<PresenceData | null>(null);
   const [activeCall, setActiveCall] = useState<Call | null>(null);
+  const [showUserInfo, setShowUserInfo] = useState(false);
+  const [showGroupInfo, setShowGroupInfo] = useState(false);
+  const [messageSenders, setMessageSenders] = useState<{ [userId: string]: UserProfile }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,6 +42,31 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat, onBack }) => {
 
     const unsubscribe = chatService.subscribeToMessages(chat.id, (updatedMessages) => {
       setMessages(updatedMessages);
+      
+      // Загружаем профили отправителей для групповых чатов
+      if (chat.type === 'group' && user) {
+        const loadSenders = async () => {
+          const senders: { [userId: string]: UserProfile } = {};
+          const uniqueSenderIds = [...new Set(updatedMessages.map(m => m.senderId))];
+          
+          for (const senderId of uniqueSenderIds) {
+            if (senderId !== user.uid && !senders[senderId]) {
+              try {
+                const profile = await authService.getUserProfile(senderId);
+                if (profile) {
+                  senders[senderId] = profile;
+                }
+              } catch (error) {
+                console.error('Error loading sender profile:', error);
+              }
+            }
+          }
+          
+          setMessageSenders(prev => ({ ...prev, ...senders }));
+        };
+        
+        loadSenders();
+      }
     });
 
     if (chat.type === 'direct' && user) {
@@ -212,6 +242,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat, onBack }) => {
   };
 
   const getStatusText = () => {
+    // Для групп и каналов не показываем статусы
+    if (chat.type === 'group' || chat.type === 'channel') {
+      return '';
+    }
+    
     // Если пользователь печатает, показываем это
     if (typingUsers.length > 0) {
       return 'печатает...';
@@ -266,7 +301,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat, onBack }) => {
         </button>
 
         <div className="chat-window__user">
-          <div className="chat-window__avatar">
+          <div 
+            className="chat-window__avatar" 
+            onClick={() => {
+              if (chat.type === 'direct' && otherUser) {
+                setShowUserInfo(true);
+              } else if (chat.type === 'group') {
+                setShowGroupInfo(true);
+              }
+            }}
+            style={{ cursor: (chat.type === 'direct' && otherUser) || chat.type === 'group' ? 'pointer' : 'default' }}
+          >
             <img src={getChatAvatar()} alt={getChatName()} />
             {otherUserPresence?.isOnline && (
               <span className="avatar-online-indicator"></span>
@@ -330,19 +375,47 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat, onBack }) => {
             </div>
 
             {/* Сообщения за эту дату */}
-            {dateMessages.map((message) => {
+            {dateMessages.map((message, index) => {
               const isOwn = message.senderId === user?.uid;
+              const senderProfile = chat.type === 'group' && !isOwn ? messageSenders[message.senderId] : null;
+              const prevMessage = index > 0 ? dateMessages[index - 1] : null;
+              const showSenderInfo = chat.type === 'group' && !isOwn && (
+                !prevMessage || prevMessage.senderId !== message.senderId
+              );
+              
               return (
                 <article key={message.id} className={`message ${isOwn ? 'message--outgoing' : 'message--incoming'}`}>
                   {!isOwn && (
-                    <div className="message__avatar">
-                      <img src={getChatAvatar()} alt={getChatName()} />
-                      {otherUserPresence?.isOnline && (
-                        <span className="avatar-online-indicator"></span>
+                    <div 
+                      className="message__avatar"
+                      onClick={() => {
+                        if (chat.type === 'direct' && otherUser) {
+                          setShowUserInfo(true);
+                        } else if (chat.type === 'group' && senderProfile) {
+                          // Можно добавить открытие информации о пользователе
+                        }
+                      }}
+                      style={{ cursor: chat.type === 'direct' ? 'pointer' : 'default' }}
+                    >
+                      {chat.type === 'group' && senderProfile ? (
+                        <img 
+                          src={senderProfile.photoURL || imageUtils.generateAvatarUrl(senderProfile.displayName, '4a9eff')} 
+                          alt={senderProfile.displayName} 
+                        />
+                      ) : (
+                        <>
+                          <img src={getChatAvatar()} alt={getChatName()} />
+                          {otherUserPresence?.isOnline && (
+                            <span className="avatar-online-indicator"></span>
+                          )}
+                        </>
                       )}
                     </div>
                   )}
                   <div className="message__content">
+                    {chat.type === 'group' && !isOwn && showSenderInfo && senderProfile && (
+                      <div className="message__sender-name">{senderProfile.displayName}</div>
+                    )}
                     <div className="message__bubble">
                       {message.type === 'image' && message.fileUrl ? (
                         <div className="message__image-wrapper">
@@ -498,6 +571,24 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat, onBack }) => {
           onAnswer={handleCallAnswer}
           onReject={handleCallReject}
           onEnd={handleCallEnd}
+        />
+      )}
+
+      {/* Модальное окно информации о пользователе */}
+      {chat.type === 'direct' && otherUser && (
+        <UserInfoModal
+          isOpen={showUserInfo}
+          onClose={() => setShowUserInfo(false)}
+          userId={otherUser.uid}
+        />
+      )}
+
+      {/* Модальное окно информации о группе */}
+      {chat.type === 'group' && (
+        <GroupInfoModal
+          isOpen={showGroupInfo}
+          onClose={() => setShowGroupInfo(false)}
+          chat={chat}
         />
       )}
     </section>

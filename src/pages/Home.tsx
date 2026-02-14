@@ -1,20 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IonPage } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { chatService, Chat } from '../services/chatService';
 import { authService, UserProfile } from '../services/authService';
 import { presenceService } from '../services/presenceService';
 import { userSearchService } from '../services/userSearchService';
+import { contactsService } from '../services/contactsService';
 import { imageUtils } from '../utils/imageUtils';
 import ChatWindow from '../components/ChatWindow';
 import Profile from '../components/Profile';
 import ChatOnlineIndicator from '../components/ChatOnlineIndicator';
+import CreateGroupModal from '../components/CreateGroupModal';
 import './Home.css';
 
 const Home: React.FC = () => {
   const history = useHistory();
+  const location = useLocation();
   const { user, userProfile, loading } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [chats, setChats] = useState<Chat[]>([]);
@@ -23,6 +26,8 @@ const Home: React.FC = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const [preSelectedUsers, setPreSelectedUsers] = useState<string[]>([]);
   const profileToggleRef = useRef<HTMLInputElement>(null);
   const themeToggleRef = useRef<HTMLInputElement>(null);
 
@@ -48,11 +53,57 @@ const Home: React.FC = () => {
     };
   }, [user, history, loading]);
 
+  // Отдельный эффект для обработки URL параметров (отслеживает изменения location)
+  useEffect(() => {
+    if (!user || loading) return;
+
+    const urlParams = new URLSearchParams(location.search);
+    const chatId = urlParams.get('chatId');
+    const createGroup = urlParams.get('createGroup');
+    const addUser = urlParams.get('addUser');
+    
+    if (chatId) {
+      // Ждем загрузки чатов перед открытием
+      if (chats.length > 0) {
+        const foundChat = chats.find(c => c.id === chatId);
+        if (foundChat) {
+          setSelectedChat(foundChat);
+        }
+        // Очищаем URL параметры
+        setTimeout(() => {
+          window.history.replaceState({}, '', '/home');
+        }, 100);
+      }
+    }
+    
+    if (createGroup === 'true') {
+      // Устанавливаем состояние сразу
+      setShowCreateGroup(true);
+      // Проверяем, есть ли предвыбранный пользователь
+      if (addUser) {
+        setPreSelectedUsers([addUser]);
+      } else {
+        setPreSelectedUsers([]);
+      }
+      // Очищаем URL параметры после небольшой задержки, чтобы состояние успело установиться
+      setTimeout(() => {
+        const currentParams = new URLSearchParams(window.location.search);
+        if (currentParams.get('createGroup') === 'true') {
+          window.history.replaceState({}, '', '/home');
+        }
+      }, 300);
+    } else if (createGroup === null && showCreateGroup) {
+      // Если параметр createGroup был удален из URL, но модальное окно все еще открыто,
+      // не закрываем его автоматически - пользователь может закрыть его вручную
+    }
+  }, [location.search, user, loading, chats]);
+
   useEffect(() => {
     if (themeToggleRef.current) {
       themeToggleRef.current.checked = theme === 'dark';
     }
   }, [theme]);
+
 
   // Search users when query starts with @
   useEffect(() => {
@@ -265,6 +316,20 @@ const Home: React.FC = () => {
             
             <button 
               type="button"
+              className="sidebar__contacts-btn" 
+              onClick={() => history.push('/contacts')}
+              aria-label="Контакты"
+              title="Контакты"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '20px', height: '20px' }}>
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </button>
+            <button 
+              type="button"
               className="sidebar__theme-toggle" 
               onClick={handleThemeToggle}
               aria-label="Переключить тему"
@@ -395,6 +460,35 @@ const Home: React.FC = () => {
           )}
         </section>
       </main>
+
+      {/* Модальное окно создания группы */}
+      <CreateGroupModal
+        onClose={() => {
+          setShowCreateGroup(false);
+          setPreSelectedUsers([]);
+        }}
+        preSelectedUsers={preSelectedUsers}
+        isOpen={showCreateGroup}
+        onGroupCreated={async (chatId) => {
+          setShowCreateGroup(false);
+          setPreSelectedUsers([]);
+          // Ждем немного, чтобы чат успел появиться в списке
+          setTimeout(() => {
+            const newChat = chats.find(c => c.id === chatId);
+            if (newChat) {
+              setSelectedChat(newChat);
+            } else {
+              // Если чат еще не в списке, загружаем его напрямую
+              chatService.getUserChats(user?.uid || '').then((allChats) => {
+                const foundChat = allChats.find(c => c.id === chatId);
+                if (foundChat) {
+                  setSelectedChat(foundChat);
+                }
+              });
+            }
+          }, 500);
+        }}
+      />
     </IonPage>
   );
 };
